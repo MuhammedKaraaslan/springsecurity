@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User extends BaseEntity implements UserDetails{
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
