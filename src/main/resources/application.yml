@@ -1,0 +1,38 @@
+server:
+  error:
+    include-message: always
+
+#spring:
+#  datasource:
+#    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5332/security}
+#    username: ${SPRING_DATASOURCE_USERNAME:security}
+#    password: ${SPRING_DATASOURCE_PASSWORD:password}
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#    show-sql: false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console.enabled: true
+
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:4B6150645367566B59703373357638792F423F4528482B4D6251655468576D5A}
+      expiration: ${JWT_EXPIRATION:86400000} #15000 #15 seconds #86400000 #1 day
+      refresh-token:
+        expiration: ${REFRESH_TOKEN_EXPIRATION:604800000} #604800000 7 days
