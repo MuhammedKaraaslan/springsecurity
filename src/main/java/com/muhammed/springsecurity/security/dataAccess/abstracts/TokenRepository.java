@@ -1,6 +1,6 @@
-package com.muhammed.springsecurity.token.dataAccess.abstracts;
+package com.muhammed.springsecurity.security.dataAccess.abstracts;
 
-import com.muhammed.springsecurity.token.model.entities.Token;
+import com.muhammed.springsecurity.security.model.entities.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

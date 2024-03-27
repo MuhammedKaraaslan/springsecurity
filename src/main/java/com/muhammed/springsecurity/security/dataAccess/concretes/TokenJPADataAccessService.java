@@ -1,8 +1,8 @@
-package com.muhammed.springsecurity.token.dataAccess.concretes;
+package com.muhammed.springsecurity.security.dataAccess.concretes;
 
-import com.muhammed.springsecurity.token.dataAccess.abstracts.TokenDao;
-import com.muhammed.springsecurity.token.dataAccess.abstracts.TokenRepository;
-import com.muhammed.springsecurity.token.model.entities.Token;
+import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
+import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenRepository;
+import com.muhammed.springsecurity.security.model.entities.Token;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package com.muhammed.springsecurity.token.model.entities;
+package com.muhammed.springsecurity.security.model.entities;
 
 import com.muhammed.springsecurity.model.BaseEntity;
-import com.muhammed.springsecurity.token.model.enums.TokenType;
+import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.user.model.entities.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
