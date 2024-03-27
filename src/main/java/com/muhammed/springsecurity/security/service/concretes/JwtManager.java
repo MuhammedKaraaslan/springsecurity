@@ -1,7 +1,7 @@
 package com.muhammed.springsecurity.security.service.concretes;
 
 import com.muhammed.springsecurity.security.config.JwtProperties;
-import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenRepository;
+import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 @Service
 public class JwtManager implements JwtService {
 
-    private final TokenRepository tokenRepository;
+    private final TokenDao tokenDao;
     private final JwtProperties jwtProperties;
 
     @Override
@@ -87,7 +87,7 @@ public class JwtManager implements JwtService {
     }
 
     private boolean isTokenNotExpiredOrRevoked(String token) {
-        return tokenRepository.findByToken(token)
+        return tokenDao.findByToken(token)
                 .map(t -> !t.isExpired() && !t.isRevoked())
                 .orElse(false);
     }

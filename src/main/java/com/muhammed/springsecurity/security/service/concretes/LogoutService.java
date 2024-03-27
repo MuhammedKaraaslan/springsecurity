@@ -1,10 +1,8 @@
 package com.muhammed.springsecurity.security.service.concretes;
 
-import com.muhammed.springsecurity.exceptions.BusinessException;
 import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
 import com.muhammed.springsecurity.security.model.entities.Token;
-import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,14 +15,9 @@ import org.springframework.stereotype.Service;
 public class LogoutService implements LogoutHandler {
 
     private final TokenDao tokenDao;
-    private final JwtService jwtService;
 
-    public LogoutService(
-            @Qualifier("token-jpa") TokenDao tokenDao,
-            JwtService jwtService
-    ) {
+    public LogoutService(@Qualifier("token-jpa") TokenDao tokenDao) {
         this.tokenDao = tokenDao;
-        this.jwtService = jwtService;
     }
 
     @Override
@@ -45,9 +38,7 @@ public class LogoutService implements LogoutHandler {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Token not found!"));
 
-        if (storedToken != null) {
-            isTokenValid(jwtToken);
-
+        if (storedToken != null && isTokenValid(jwtToken)) {
             storedToken.setExpired(true);
             storedToken.setRevoked(true);
             tokenDao.save(storedToken);
@@ -58,7 +49,6 @@ public class LogoutService implements LogoutHandler {
     private boolean isTokenValid(String jwtToken) {
         return tokenDao.findByToken(jwtToken)
                 .map(t -> !t.isExpired() && !t.isRevoked())
-                .orElseThrow(() ->
-                        new BusinessException("Invalid or expired token!"));
+                .orElse(false);
     }
 }
