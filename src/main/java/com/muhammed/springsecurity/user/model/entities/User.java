@@ -1,6 +1,5 @@
 package com.muhammed.springsecurity.user.model.entities;
 
-import com.muhammed.springsecurity.model.BaseEntity;
 import com.muhammed.springsecurity.model.Role;
 import jakarta.persistence.*;
 import lombok.Data;
