@@ -29,7 +29,7 @@ class CustomerJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnSavedCustomer_When_RepositorySavesCustomer() {
+    void Given_RepositorySavesCustomer_When_SaveIsCalled_Then_ReturnSavedCustomer() {
         //Given
         String email = "test@email.com";
         Customer expected = new Customer(email, "Password1.", "dummyFirstname", "dummyLastname");
@@ -42,7 +42,7 @@ class CustomerJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnCustomer_When_CustomerExistsByEmail() {
+    void Given_CustomerExistsByEmail_When_FindByEmailIsCalled_Then_ReturnCustomer() {
         //Given
         String email = "test@email.com";
         Customer expected = new Customer(email, "Password1.", "dummyFirstname", "dummyLastname");
@@ -58,7 +58,7 @@ class CustomerJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnEmptyOptional_When_CustomerDoesNotExistByEmail() {
+    void Given_CustomerDoesNotExistByEmail_When_FindByEmailIsCalled_Then_ReturnEmptyOptional() {
         // Given
         String email = "nonexistent@email.com";
 

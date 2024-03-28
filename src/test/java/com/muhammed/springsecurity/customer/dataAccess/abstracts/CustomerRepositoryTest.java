@@ -22,7 +22,7 @@ class CustomerRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnCustomer_When_CustomerExistsByEmail() {
+    void Given_CustomerExistsByEmail_When_FindByEmailIsCalled_Then_ReturnCustomer() {
         //Given
         String email = "test@email.com";
         Customer expected = saveCustomer(email, "Password1.", "dummyFirstname", "dummyLastname");
@@ -36,7 +36,7 @@ class CustomerRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnEmptyOptional_When_CustomerDoesNotExistByEmail() {
+    void Given_CustomerDoesNotExistByEmail_When_FindByEmailIsCalled_Then_ReturnEmptyOptional() {
         // When
         Optional<Customer> foundCustomer = underTest.findByEmail("nonexistent@email.com");
 
