@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.Objects;
 
-public class NameValidator implements ConstraintValidator<PasswordPattern, String> {
+public class NameValidator implements ConstraintValidator<ValidName, String> {
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
