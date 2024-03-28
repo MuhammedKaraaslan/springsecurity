@@ -28,8 +28,11 @@ public class SecurityFilterChainConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
-    private static final String[] WHITE_LIST_URL = {"/h2-console/**",
-            "/api/v1/customers/register", "/api/v1/customers/login", "/api/v1/customers/refresh-token"};
+    private static final String[] WHITE_LIST_URL = {
+            "/h2-console/**",
+            "/api/v1/customers/register",
+            "/api/v1/demo/**"
+    };
 
     /**
      * Defines the security filter chain with specific rules for HTTP requests.
@@ -46,6 +49,7 @@ public class SecurityFilterChainConfiguration {
                 .headers(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
+//                        .requestMatchers("/api/v1/customers/**").hasAnyRole(ADMIN.name(), CUSTOMER.name())
 //                        .requestMatchers("/api/v1/customers/**").hasAnyRole(ADMIN.name(), CUSTOMER.name())
 //                        .requestMatchers(GET, "/api/v1/admin/**").hasAnyAuthority(ADMIN_READ.name())
 //                        .requestMatchers(POST, "/api/v1/admin/**").hasAnyAuthority(ADMIN_CREATE.name())
