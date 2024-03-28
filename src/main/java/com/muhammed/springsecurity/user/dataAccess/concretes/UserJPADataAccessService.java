@@ -6,7 +6,6 @@ import com.muhammed.springsecurity.user.model.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository("user-jpa")
@@ -23,15 +22,5 @@ public class UserJPADataAccessService implements UserDao {
     @Override
     public boolean existsUserByEmail(String email) {
         return this.userRepository.existsUserByEmail(email);
-    }
-
-    @Override
-    public User save(User user) {
-        return this.userRepository.save(user);
-    }
-
-    @Override
-    public List<User> getAll() {
-        return this.userRepository.findAll();
     }
 }
