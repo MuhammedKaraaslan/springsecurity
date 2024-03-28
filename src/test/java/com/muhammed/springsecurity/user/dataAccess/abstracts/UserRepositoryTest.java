@@ -23,7 +23,7 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnUser_When_UserExistsByEmail() {
+    void Given_UserExistsByEmail_When_FindByEmailIsCalled_Then_ReturnUser() {
         //Given
         String email = "test@email.com";
         User expected = saveUser(email, "Password1.", Set.of(Role.USER));
@@ -37,7 +37,7 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnEmptyOptional_When_UserDoesNotExistByEmail() {
+    void Given_UserDoesNotExistByEmail_When_FindByEmailIsCalled_Then_ReturnEmptyOptional() {
         // When
         Optional<User> foundUser = underTest.findByEmail("nonexistent@email.com");
 
@@ -46,7 +46,7 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnTrue_When_UserExistsByEmail() {
+    void Given_UserExistsByEmail_When_ExistsUserByEmailIsCalled_Then_ReturnTrue() {
         // Given
         String email = "test@email.com";
         saveUser(email, "Password1.", Set.of(Role.USER));
@@ -56,7 +56,7 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    void should_ReturnFalse_When_UserDoesNotExistByEmail() {
+    void Given_UserDoesNotExistByEmail_When_ExistsUserByEmailIsCalled_Then_ReturnFalse() {
         // When
         String email = "nonexistent@email.com";
         boolean existsUserByEmail = underTest.existsUserByEmail(email);
