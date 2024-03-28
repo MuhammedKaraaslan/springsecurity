@@ -13,4 +13,5 @@ public interface TokenDao {
 
     Token save(Token token);
 
+    void saveAll(List<Token> validUserTokens);
 }

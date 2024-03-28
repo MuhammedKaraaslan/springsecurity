@@ -29,4 +29,9 @@ public class TokenJPADataAccessService implements TokenDao {
     public Token save(Token token) {
         return this.tokenRepository.save(token);
     }
+
+    @Override
+    public void saveAll(List<Token> validUserTokens) {
+        this.tokenRepository.saveAll(validUserTokens);
+    }
 }

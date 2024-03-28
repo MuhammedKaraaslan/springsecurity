@@ -5,9 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.muhammed.springsecurity.model.Role.CUSTOMER;
-
-
 @RestController
 @RequestMapping("/api/v1/demo")
 public class DemoController {
@@ -18,7 +15,7 @@ public class DemoController {
     }
 
     @GetMapping("/customer-secure-endpoint")
-    @PreAuthorize("hasRole(CUSTOMER.name())")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public String customerSecureEndpoint() {
         return "Hello from customer secure endpoint";
     }

@@ -31,6 +31,7 @@ public class SecurityFilterChainConfiguration {
     private static final String[] WHITE_LIST_URL = {
             "/h2-console/**",
             "/api/v1/customers/register",
+            "/api/v1/customers/login",
             "/api/v1/demo/**"
     };
 
