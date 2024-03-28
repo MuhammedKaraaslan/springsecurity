@@ -1,4 +1,4 @@
-package com.muhammed.springsecurity;
+package com.muhammed.springsecurity.abstracts;
 
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
