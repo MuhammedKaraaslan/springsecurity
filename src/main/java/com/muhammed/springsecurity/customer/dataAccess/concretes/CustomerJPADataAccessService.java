@@ -6,6 +6,8 @@ import com.muhammed.springsecurity.customer.model.entities.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository("customer-jpa")
 @RequiredArgsConstructor
 public class CustomerJPADataAccessService implements CustomerDao {
@@ -15,5 +17,10 @@ public class CustomerJPADataAccessService implements CustomerDao {
     @Override
     public Customer save(Customer customer) {
         return this.customerRepository.save(customer);
+    }
+
+    @Override
+    public Optional<Customer> findByEmail(String email) {
+        return this.customerRepository.findByEmail(email);
     }
 }

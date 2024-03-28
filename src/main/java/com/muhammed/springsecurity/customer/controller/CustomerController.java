@@ -5,6 +5,8 @@ import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationR
 import com.muhammed.springsecurity.customer.model.responses.CustomerLoginResponse;
 import com.muhammed.springsecurity.customer.model.responses.CustomerRegistrationResponse;
 import com.muhammed.springsecurity.customer.service.abstracts.CustomerService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +34,7 @@ public class CustomerController {
                         response.accessToken(),
                         response.refreshToken()
                 )
-                .build();
+                .body(response);
     }
 
     @PostMapping("/login")
@@ -48,4 +50,8 @@ public class CustomerController {
                 .body(response);
     }
 
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        this.customerService.refreshToken(request, response);
+    }
 }

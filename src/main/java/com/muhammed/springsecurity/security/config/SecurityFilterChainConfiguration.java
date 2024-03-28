@@ -32,6 +32,7 @@ public class SecurityFilterChainConfiguration {
             "/h2-console/**",
             "/api/v1/customers/register",
             "/api/v1/customers/login",
+            "/api/v1/customers/refresh-token",
             "/api/v1/demo/**"
     };
 
