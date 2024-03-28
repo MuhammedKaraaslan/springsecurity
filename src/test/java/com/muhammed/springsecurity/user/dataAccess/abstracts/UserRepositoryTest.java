@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest // Configures a minimal Spring Boot test environment for JPA components
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Prevents replacing the test database configuration
 @Import({TestConfig.class}) // Imports additional configurations or beans for testing purposes
-@Transactional
+@Transactional(propagation = Propagation.NOT_SUPPORTED) // Disables transaction management for the test methods
 class UserRepositoryTest {
 
     @Autowired
