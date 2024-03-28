@@ -33,7 +33,8 @@ class UserJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnUser_When_UserExistsByEmail() {
+    void Given_UserExistsByEmail_When_FindByEmailIsCalled_Then_ReturnUser()
+    {
         // Given
         String email = "test@email.com";
         User expected = new User(email, "Password1.", Set.of(Role.USER));
@@ -53,7 +54,7 @@ class UserJPADataAccessServiceTest {
             "user1@email.com, true",
             "user2@email.com, false"
     })
-    void should_ReturnCorrectUserExistence(String email, boolean exists) {
+    void Given_UserExistsByEmail_When_FindByEmailIsCalled_Then_ReturnCorrectUserExistence(String email, boolean exists) {
         // Given
         when(userRepository.findByEmail(email))
                 .thenReturn(exists
@@ -69,7 +70,7 @@ class UserJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnTrue_When_UserExistsByEmail() {
+    void Given_UserExistsByEmail_When_ExistsUserByEmailIsCalled_Then_ReturnTrue() {
         // Given
         String email = "test@email.com";
 
@@ -80,7 +81,7 @@ class UserJPADataAccessServiceTest {
     }
 
     @Test
-    void should_ReturnFalse_When_UserDoesNotExistByEmail() {
+    void Given_UserDoesNotExistByEmail_When_ExistsUserByEmailIsCalled_Then_ReturnFalse() {
         // When
         String email = "nonexistent@email.com";
 
