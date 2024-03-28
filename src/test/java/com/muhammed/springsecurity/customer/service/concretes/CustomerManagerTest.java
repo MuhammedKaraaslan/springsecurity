@@ -39,7 +39,7 @@ class CustomerManagerTest extends AbstractServiceTest {
 
     // add test for register method
     @Test
-    void register() {
+    void Given_ValidCustomerRegistrationRequest_When_RegisterIsCalled_Then_ReturnCustomerRegistrationResponse() {
         // Given
         String jwtToken = "jwtToken";
         String refreshToken = "refreshToken";
