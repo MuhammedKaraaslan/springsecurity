@@ -67,4 +67,26 @@ class UserJPADataAccessServiceTest {
         // Then
         assertEquals(exists, foundUser.isPresent());
     }
+
+    @Test
+    void should_ReturnTrue_When_UserExistsByEmail() {
+        // Given
+        String email = "test@email.com";
+
+        when(userRepository.existsUserByEmail(email)).thenReturn(true);
+
+        // Then
+        assertTrue(underTest.existsUserByEmail(email));
+    }
+
+    @Test
+    void should_ReturnFalse_When_UserDoesNotExistByEmail() {
+        // When
+        String email = "nonexistent@email.com";
+
+        when(userRepository.existsUserByEmail(email)).thenReturn(false);
+
+        // Then
+        assertFalse(underTest.existsUserByEmail(email));
+    }
 }
