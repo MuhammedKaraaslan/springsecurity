@@ -2,31 +2,55 @@ package com.muhammed.springsecurity.security.service.concretes;
 
 import com.muhammed.springsecurity.security.config.JwtProperties;
 import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
+import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
  * Service class for managing JWT tokens, including token generation, validation, and extraction of claims.
  */
-@RequiredArgsConstructor
 @Service
 public class JwtManager implements JwtService {
 
     private final TokenDao tokenDao;
     private final JwtProperties jwtProperties;
+
+    public JwtManager(@Qualifier("token-jpa") TokenDao tokenDao,
+                      JwtProperties jwtProperties) {
+        this.tokenDao = tokenDao;
+        this.jwtProperties = jwtProperties;
+    }
+
+    @Override
+    public List<Token> findAllValidTokenByUser(Integer userId) {
+        return this.tokenDao.findAllValidTokenByUser(userId);
+    }
+
+    @Override
+    public Optional<Token> findByToken(String token) {
+        return this.tokenDao.findByToken(token);
+    }
+
+    @Override
+    public Token save(Token token) {
+        return this.tokenDao.save(token);
+    }
+
+    @Override
+    public void saveAll(List<Token> validUserTokens) {
+        this.tokenDao.saveAll(validUserTokens);
+    }
 
     @Override
     public String generateToken(UserDetails userDetails) {
