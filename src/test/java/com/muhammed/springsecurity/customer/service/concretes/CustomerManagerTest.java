@@ -8,9 +8,14 @@ import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationR
 import com.muhammed.springsecurity.customer.model.responses.CustomerLoginResponse;
 import com.muhammed.springsecurity.customer.model.responses.CustomerRegistrationResponse;
 import com.muhammed.springsecurity.exceptions.BusinessException;
+import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -37,6 +44,12 @@ class CustomerManagerTest extends AbstractServiceTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
 
     @InjectMocks
     private CustomerManager underTest;
@@ -159,5 +172,62 @@ class CustomerManagerTest extends AbstractServiceTest {
         // Verify that authentication manager was called once
         verify(authenticationManager, times(1)).authenticate(any());
     }
+
+    @ParameterizedTest
+    @CsvSource({"null", "InvalidToken "})
+    void Given_MissingOrInvalidAuthHeader_When_RefreshTokenIsCalled_Then_ThrowBusinessException(String authHeader) {
+        // Given
+        when(request.getHeader("Authorization")).thenReturn(
+                authHeader.equals("null") ? null : authHeader
+        );
+
+        // Then
+        assertThatThrownBy(() -> underTest.refreshToken(request, response))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Authorization header is missing or invalid!");
+    }
+
+    @Test
+    void Given_NullEmail_When_RefreshTokenIsCalled_Then_ThrowBusinessException() {
+        // Given
+        when(request.getHeader("Authorization")).thenReturn("Bearer refreshToken");
+        when(jwtService.extractUsername("refreshToken")).thenReturn(null);
+
+        // Then
+        assertThatThrownBy(() -> underTest.refreshToken(request, response))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Email cannot be extracted from refresh token!");
+    }
+
+    @Test
+    void Given_NonexistentEmail_When_FindByEmailIsCalled_Then_ThrowResourceNotFoundException() {
+        // Given
+        String email = "nonexistent@test.com";
+        when(request.getHeader("Authorization")).thenReturn("Bearer refreshToken");
+        when(jwtService.extractUsername("refreshToken")).thenReturn(email);
+        when(customerDao.findByEmail(email)).thenReturn(Optional.empty());
+
+        // Then
+        assertThatThrownBy(() -> underTest.refreshToken(request, response))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage(String.format("User with %s email not found!", email));
+    }
+
+    @Test
+    void Given_InvalidRefreshToken_When_RefreshTokenIsCalled_Then_ThrowBusinessException() {
+        // Given
+        String refreshToken = "invalidRefreshToken";
+        Customer customer = new Customer("test@email.com", "password", "dummyFirstname", "dummyLastname");
+        when(request.getHeader("Authorization")).thenReturn("Bearer refreshToken");
+        when(jwtService.extractUsername("refreshToken")).thenReturn(customer.getEmail());
+        when(customerDao.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
+        when(jwtService.isRefreshTokenValid(refreshToken, customer)).thenReturn(false);
+
+        // Then
+        assertThatThrownBy(() -> underTest.refreshToken(request, response))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Refresh token is not valid!");
+    }
+
 
 }

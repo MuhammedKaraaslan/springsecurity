@@ -116,7 +116,6 @@ public class CustomerManager implements CustomerService {
             throw new BusinessException("An error occurred while writing the response!");
         }
 
-
     }
 
     private void saveToken(Customer customer, String accessToken) {
