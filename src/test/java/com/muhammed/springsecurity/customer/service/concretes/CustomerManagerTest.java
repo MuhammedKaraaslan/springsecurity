@@ -8,7 +8,6 @@ import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationR
 import com.muhammed.springsecurity.customer.model.responses.CustomerLoginResponse;
 import com.muhammed.springsecurity.customer.model.responses.CustomerRegistrationResponse;
 import com.muhammed.springsecurity.exceptions.BusinessException;
-import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import org.junit.jupiter.api.Test;
@@ -29,9 +28,6 @@ class CustomerManagerTest extends AbstractServiceTest {
 
     @Mock
     private CustomerDao customerDao;
-
-    @Mock
-    private TokenDao tokenDao;
 
     @Mock
     private JwtService jwtService;
@@ -65,7 +61,7 @@ class CustomerManagerTest extends AbstractServiceTest {
         when(jwtService.generateToken(customer)).thenReturn(jwtToken);
         when(jwtService.generateRefreshToken(customer)).thenReturn(refreshToken);
         when(customerDao.save(customer)).thenReturn(customer);
-        when(tokenDao.save(any())).thenReturn(null);
+        when(jwtService.save(any())).thenReturn(null);
 
         // When
         CustomerRegistrationResponse actual = underTest.register(customerRegistrationRequest);
@@ -99,7 +95,7 @@ class CustomerManagerTest extends AbstractServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(jwtService.generateToken(customer)).thenReturn(jwtToken);
         when(jwtService.generateRefreshToken(customer)).thenReturn(refreshToken);
-        when(tokenDao.save(any())).thenReturn(null);
+        when(jwtService.save(any())).thenReturn(null);
 
         // When
         CustomerLoginResponse actual = underTest.login(customerLoginRequest);
@@ -136,8 +132,8 @@ class CustomerManagerTest extends AbstractServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(jwtService.generateToken(customer)).thenReturn(jwtToken);
         when(jwtService.generateRefreshToken(customer)).thenReturn(refreshToken);
-        when(tokenDao.findAllValidTokenByUser(anyInt())).thenReturn(List.of(token));
-        when(tokenDao.save(any())).thenReturn(null);
+        when(jwtService.findAllValidTokenByUser(anyInt())).thenReturn(List.of(token));
+        when(jwtService.save(any())).thenReturn(null);
 
         // When
         CustomerLoginResponse actual = underTest.login(customerLoginRequest);

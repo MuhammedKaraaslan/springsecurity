@@ -11,7 +11,6 @@ import com.muhammed.springsecurity.customer.model.responses.CustomerRegistration
 import com.muhammed.springsecurity.customer.service.abstracts.CustomerService;
 import com.muhammed.springsecurity.exceptions.BusinessException;
 import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
-import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenDao;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
@@ -33,18 +32,15 @@ import java.util.List;
 public class CustomerManager implements CustomerService {
 
     private final CustomerDao customerDao;
-    private final TokenDao tokenDao;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public CustomerManager(@Qualifier("customer-jpa") CustomerDao customerDao,
-                           @Qualifier("token-jpa") TokenDao tokenDao,
                            JwtService jwtService,
                            PasswordEncoder passwordEncoder,
                            AuthenticationManager authenticationManager) {
         this.customerDao = customerDao;
-        this.tokenDao = tokenDao;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -130,17 +126,17 @@ public class CustomerManager implements CustomerService {
                 .tokenType(TokenType.BEARER)
                 .build();
 
-        this.tokenDao.save(token);
+        this.jwtService.save(token);
     }
 
     private void revokeAllTokens(Customer customer) {
-        List<Token> validUserTokens = tokenDao.findAllValidTokenByUser(customer.getId());
+        List<Token> validUserTokens = jwtService.findAllValidTokenByUser(customer.getId());
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
-        tokenDao.saveAll(validUserTokens);
+        jwtService.saveAll(validUserTokens);
     }
 }
