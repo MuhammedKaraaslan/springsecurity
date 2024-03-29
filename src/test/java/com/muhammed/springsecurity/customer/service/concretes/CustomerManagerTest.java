@@ -145,7 +145,7 @@ class CustomerManagerTest extends AbstractServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(jwtService.generateToken(customer)).thenReturn(jwtToken);
         when(jwtService.generateRefreshToken(customer)).thenReturn(refreshToken);
-        when(jwtService.findAllValidTokenByUser(anyInt())).thenReturn(List.of(token));
+        when(jwtService.findAllValidTokenByUser(any())).thenReturn(List.of(token));
         when(jwtService.save(any())).thenReturn(null);
 
         // When
