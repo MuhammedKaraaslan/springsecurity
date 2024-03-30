@@ -15,14 +15,12 @@ import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import com.muhammed.springsecurity.user.business.abstracts.UserService;
+import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,16 +33,13 @@ public class CustomerManager implements CustomerService {
     private final CustomerDao customerDao;
     private final JwtService jwtService;
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
 
     public CustomerManager(@Qualifier("customer-jpa") CustomerDao customerDao,
                            JwtService jwtService,
-                           UserService userService,
-                           AuthenticationManager authenticationManager) {
+                           UserService userService) {
         this.customerDao = customerDao;
         this.jwtService = jwtService;
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -65,21 +60,18 @@ public class CustomerManager implements CustomerService {
 
     @Override
     public CustomerLoginResponse login(CustomerLoginRequest customerLoginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        customerLoginRequest.email(),
-                        customerLoginRequest.password()
-                ));
+        // Login logic specific to customers
+        // Validate customer-specific fields, etc.
+        // Optionally, perform additional tasks specific to customers
+        UserLoginResponse userLoginResponse = userService.login(
+                customerLoginRequest.email(),
+                customerLoginRequest.password()
+        );
 
-        Customer customer = (Customer) authentication.getPrincipal();
-
-        String jwtToken = jwtService.generateToken(customer);
-        String refreshToken = jwtService.generateRefreshToken(customer);
-
-        revokeAllTokens(customer);
-        saveToken(customer, jwtToken);
-
-        return new CustomerLoginResponse(jwtToken, refreshToken);
+        return new CustomerLoginResponse(
+                userLoginResponse.accessToken(),
+                userLoginResponse.refreshToken()
+        );
     }
 
     @Override
