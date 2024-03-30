@@ -1,5 +1,10 @@
 package com.muhammed.springsecurity.user.business.concretes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.muhammed.springsecurity.customer.model.entities.Customer;
+import com.muhammed.springsecurity.customer.model.responses.CustomerRefreshTokenResponse;
+import com.muhammed.springsecurity.exceptions.BusinessException;
+import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
@@ -8,7 +13,10 @@ import com.muhammed.springsecurity.user.dataAccess.abstracts.UserDao;
 import com.muhammed.springsecurity.user.model.entities.User;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -67,6 +76,42 @@ public class UserManager implements UserService {
         saveToken(user, jwtToken);
 
         return new UserLoginResponse(jwtToken, refreshToken);
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String headerKeyword = "Bearer ";
+
+        if (authHeader == null || !authHeader.startsWith(headerKeyword))
+            throw new BusinessException("Authorization header is missing or invalid!");
+
+        String refreshToken = authHeader.substring(headerKeyword.length());
+        String email = jwtService.extractUsername(refreshToken);
+
+        if (email == null)
+            throw new BusinessException("Email cannot be extracted from refresh token!");
+
+        User user = userDao.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(String.format("User with %s email not found!", email)));
+
+        if (!jwtService.isRefreshTokenValid(refreshToken, user))
+            throw new BusinessException("Refresh token is not valid!");
+
+        String accessToken = jwtService.generateToken(user);
+
+        revokeAllTokens(user.getId());
+        saveToken(user, accessToken);
+
+        CustomerRefreshTokenResponse refreshTokenResponse = new CustomerRefreshTokenResponse(accessToken);
+
+        try {
+            new ObjectMapper().writeValue(response.getOutputStream(), refreshTokenResponse);
+        } catch (IOException e) {
+            throw new BusinessException("An error occurred while writing the response!");
+        }
+
     }
 
     private void saveToken(User user, String accessToken) {
