@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NameValidatorTest {
+public class PasswordPatternValidatorTest {
 
     private Validator validator;
 
@@ -25,9 +25,9 @@ public class NameValidatorTest {
     }
 
     @Test
-    void Given_ValidName_When_Validate_ThenNoValidations() {
+    void Given_ValidPassword_When_Validate_Then_ReturnTrue() {
         // Given
-        TestEntity entity = new TestEntity("John Doe");
+        TestEntity entity = new TestEntity("Test@1234");
 
         // When
         Set<ConstraintViolation<TestEntity>> violations = validator.validate(entity);
@@ -38,12 +38,19 @@ public class NameValidatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "null",
-            "J",
+            "test@1234, false",   // Missing uppercase letter
+            "TEST@1234, false",   // Missing lowercase letter
+            "Test1234, false",    // Missing special character
+            "T@1, false",         // Short length
+            "t@1, false",         // Short length and missing uppercase letter
+            "Test12, false",      // Short length and missing special character
+            "Test@, false",       // Short length and missing digit
+            "12345678, false",    // Only digits
+            "!@#$%^&*, false"     // Only special characters
     })
-    void Given_InValidName_When_Validate_ThenValidationsExist(String name) {
+    void Given_InvalidPasswordFormat_When_Validate_Then_ReturnFalse(String password) {
         // Given
-        TestEntity entity = new TestEntity(name.equals("null") ? null : name);
+        TestEntity entity = new TestEntity(password);
 
         // When
         Set<ConstraintViolation<TestEntity>> violations = validator.validate(entity);
@@ -51,12 +58,12 @@ public class NameValidatorTest {
         // Then
         assertFalse(violations.isEmpty());
         assertEquals(1, violations.size());
-        assertEquals("Name must be at least 2 characters long", violations.iterator().next().getMessage());
+        assertEquals("Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters long", violations.iterator().next().getMessage());
     }
 
     private record TestEntity(
-            @ValidName
-            String name
+            @PasswordPattern
+            String password
     ) {
     }
 }
