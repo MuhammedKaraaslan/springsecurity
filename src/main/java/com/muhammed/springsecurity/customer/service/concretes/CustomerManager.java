@@ -1,18 +1,15 @@
 package com.muhammed.springsecurity.customer.service.concretes;
 
-import com.muhammed.springsecurity.customer.dataAccess.abstracts.CustomerDao;
 import com.muhammed.springsecurity.customer.model.requests.CustomerLoginRequest;
 import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationRequest;
 import com.muhammed.springsecurity.customer.model.responses.CustomerLoginResponse;
 import com.muhammed.springsecurity.customer.model.responses.CustomerRegistrationResponse;
 import com.muhammed.springsecurity.customer.service.abstracts.CustomerService;
-import com.muhammed.springsecurity.security.service.abstracts.JwtService;
 import com.muhammed.springsecurity.user.business.abstracts.UserService;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
