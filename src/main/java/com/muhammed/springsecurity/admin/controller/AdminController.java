@@ -1,8 +1,12 @@
 package com.muhammed.springsecurity.admin.controller;
 
+import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
 import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
+import com.muhammed.springsecurity.admin.model.responses.AdminLoginResponse;
 import com.muhammed.springsecurity.admin.model.responses.AdminRegistrationResponse;
 import com.muhammed.springsecurity.admin.service.abstracts.AdminService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +35,24 @@ public class AdminController {
                         response.refreshToken()
                 )
                 .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AdminLoginResponse> login(
+            @Valid @RequestBody AdminLoginRequest adminLoginRequest) {
+        AdminLoginResponse response = adminService.login(adminLoginRequest);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.AUTHORIZATION,
+                        response.accessToken()
+                )
+                .body(response);
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        this.adminService.refreshToken(request, response);
     }
 
 }
