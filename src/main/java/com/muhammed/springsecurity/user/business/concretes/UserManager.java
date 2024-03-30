@@ -1,8 +1,6 @@
 package com.muhammed.springsecurity.user.business.concretes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.muhammed.springsecurity.customer.model.entities.Customer;
-import com.muhammed.springsecurity.customer.model.responses.CustomerRefreshTokenResponse;
 import com.muhammed.springsecurity.exceptions.BusinessException;
 import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.model.entities.Token;
@@ -12,6 +10,7 @@ import com.muhammed.springsecurity.user.business.abstracts.UserService;
 import com.muhammed.springsecurity.user.dataAccess.abstracts.UserDao;
 import com.muhammed.springsecurity.user.model.entities.User;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
+import com.muhammed.springsecurity.user.model.responses.UserRefreshTokenResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -104,7 +103,7 @@ public class UserManager implements UserService {
         revokeAllTokens(user.getId());
         saveToken(user, accessToken);
 
-        CustomerRefreshTokenResponse refreshTokenResponse = new CustomerRefreshTokenResponse(accessToken);
+        UserRefreshTokenResponse refreshTokenResponse = new UserRefreshTokenResponse(accessToken);
 
         try {
             new ObjectMapper().writeValue(response.getOutputStream(), refreshTokenResponse);

@@ -29,7 +29,7 @@ class CustomerJPADataAccessServiceTest {
     }
 
     @Test
-    void Given_RepositorySavesCustomer_When_SaveIsCalled_Then_ReturnSavedCustomer() {
+    void Given_ValidCustomer_When_SaveIsCalled_Then_ReturnSavedCustomer() {
         //Given
         String email = "test@email.com";
         Customer expected = new Customer(email, "Password1.", "dummyFirstname", "dummyLastname");
