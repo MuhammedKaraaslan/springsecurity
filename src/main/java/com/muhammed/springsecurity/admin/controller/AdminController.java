@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,6 +52,7 @@ public class AdminController {
     }
 
     @PostMapping("/refresh-token")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         this.adminService.refreshToken(request, response);
     }
