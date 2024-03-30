@@ -25,7 +25,7 @@ public class NameValidatorTest {
     }
 
     @Test
-    void Given_ValidName_When_Validate_ThenNoValidations() {
+    void Given_ValidName_When_Validate_Then_NoValidations() {
         // Given
         TestEntity entity = new TestEntity("John Doe");
 
@@ -41,7 +41,7 @@ public class NameValidatorTest {
             "null",
             "J",
     })
-    void Given_InValidName_When_Validate_ThenValidationsExist(String name) {
+    void Given_InValidName_When_Validate_Then_ValidationsExist(String name) {
         // Given
         TestEntity entity = new TestEntity(name.equals("null") ? null : name);
 

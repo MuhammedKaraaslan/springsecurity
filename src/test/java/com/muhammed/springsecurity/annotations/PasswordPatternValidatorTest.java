@@ -25,7 +25,7 @@ public class PasswordPatternValidatorTest {
     }
 
     @Test
-    void Given_ValidPassword_When_Validate_Then_ReturnTrue() {
+    void Given_ValidPassword_When_Validate_Then_NoViolations() {
         // Given
         TestEntity entity = new TestEntity("Test@1234");
 
@@ -38,17 +38,17 @@ public class PasswordPatternValidatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "test@1234, false",   // Missing uppercase letter
-            "TEST@1234, false",   // Missing lowercase letter
-            "Test1234, false",    // Missing special character
-            "T@1, false",         // Short length
-            "t@1, false",         // Short length and missing uppercase letter
-            "Test12, false",      // Short length and missing special character
-            "Test@, false",       // Short length and missing digit
-            "12345678, false",    // Only digits
-            "!@#$%^&*, false"     // Only special characters
+            "test@1234",   // Missing uppercase letter
+            "TEST@1234",   // Missing lowercase letter
+            "Test1234",    // Missing special character
+            "T@1",         // Short length
+            "t@1",         // Short length and missing uppercase letter
+            "Test12",      // Short length and missing special character
+            "Test@",       // Short length and missing digit
+            "12345678",    // Only digits
+            "!@#$%^&*"     // Only special characters
     })
-    void Given_InvalidPasswordFormat_When_Validate_Then_ReturnFalse(String password) {
+    void Given_InvalidPasswordFormat_When_Validate_Then_ViolationsExist(String password) {
         // Given
         TestEntity entity = new TestEntity(password);
 
