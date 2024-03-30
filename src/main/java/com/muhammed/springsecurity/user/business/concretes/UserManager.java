@@ -1,6 +1,5 @@
 package com.muhammed.springsecurity.user.business.concretes;
 
-
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
