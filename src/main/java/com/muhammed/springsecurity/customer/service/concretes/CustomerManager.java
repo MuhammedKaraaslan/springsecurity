@@ -14,6 +14,8 @@ import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
+import com.muhammed.springsecurity.user.business.abstracts.UserService;
+import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,34 +34,33 @@ public class CustomerManager implements CustomerService {
 
     private final CustomerDao customerDao;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
     public CustomerManager(@Qualifier("customer-jpa") CustomerDao customerDao,
                            JwtService jwtService,
-                           PasswordEncoder passwordEncoder,
+                           UserService userService,
                            AuthenticationManager authenticationManager) {
         this.customerDao = customerDao;
         this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
 
     @Override
     @Transactional
     public CustomerRegistrationResponse register(CustomerRegistrationRequest customerRegistrationRequest) {
+        // Registration logic specific to customers
+        // Validate customer-specific fields, etc.
+        // Optionally, perform additional tasks specific to customers
+        UserRegistrationResponse userRegistrationResponse = userService.register(
+                CustomerRegistrationRequest.toEntity(customerRegistrationRequest)
+        );
 
-        Customer customer = CustomerRegistrationRequest.toEntity(customerRegistrationRequest);
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-
-        String accessToken = jwtService.generateToken(customer);
-        String refreshToken = jwtService.generateRefreshToken(customer);
-
-        Customer savedCustomer = customerDao.save(customer);
-
-        saveToken(savedCustomer, accessToken);
-
-        return new CustomerRegistrationResponse(accessToken, refreshToken);
+        return new CustomerRegistrationResponse(
+                userRegistrationResponse.accessToken(),
+                userRegistrationResponse.refreshToken()
+        );
     }
 
     @Override

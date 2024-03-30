@@ -1,8 +1,6 @@
 package com.muhammed.springsecurity.user.business.concretes;
 
 
-import com.muhammed.springsecurity.customer.model.entities.Customer;
-import com.muhammed.springsecurity.security.dataAccess.abstracts.TokenRepository;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.model.enums.TokenType;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
@@ -20,19 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserManager implements UserService {
 
     private final UserDao userDao;
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public UserManager(@Qualifier("user-jpa") UserDao userDao,
-                       TokenRepository tokenRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
                        AuthenticationManager authenticationManager
     ) {
         this.userDao = userDao;
-        this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;

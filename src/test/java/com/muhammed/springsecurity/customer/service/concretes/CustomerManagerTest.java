@@ -11,6 +11,8 @@ import com.muhammed.springsecurity.exceptions.BusinessException;
 import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.security.model.entities.Token;
 import com.muhammed.springsecurity.security.service.abstracts.JwtService;
+import com.muhammed.springsecurity.user.business.abstracts.UserService;
+import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,6 @@ import org.mockito.Mock;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ class CustomerManagerTest extends AbstractServiceTest {
     private JwtService jwtService;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -67,14 +68,11 @@ class CustomerManagerTest extends AbstractServiceTest {
                         "dummyLastname");
 
         Customer customer = CustomerRegistrationRequest.toEntity(customerRegistrationRequest);
+        UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse(jwtToken, refreshToken);
 
         CustomerRegistrationResponse expected = new CustomerRegistrationResponse(jwtToken, refreshToken);
 
-        when(passwordEncoder.encode(customer.getPassword())).thenReturn(customer.getPassword());
-        when(jwtService.generateToken(customer)).thenReturn(jwtToken);
-        when(jwtService.generateRefreshToken(customer)).thenReturn(refreshToken);
-        when(customerDao.save(customer)).thenReturn(customer);
-        when(jwtService.save(any())).thenReturn(null);
+        when(userService.register(customer)).thenReturn(userRegistrationResponse);
 
         // When
         CustomerRegistrationResponse actual = underTest.register(customerRegistrationRequest);
