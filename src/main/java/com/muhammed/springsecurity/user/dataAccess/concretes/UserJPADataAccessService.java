@@ -23,4 +23,9 @@ public class UserJPADataAccessService implements UserDao {
     public boolean existsUserByEmail(String email) {
         return this.userRepository.existsUserByEmail(email);
     }
+
+    @Override
+    public User save(User user) {
+        return this.userRepository.save(user);
+    }
 }

@@ -9,4 +9,7 @@ public interface UserDao {
     Optional<User> findByEmail(String email);
 
     boolean existsUserByEmail(String email);
+
+    User save(User user);
+
 }
