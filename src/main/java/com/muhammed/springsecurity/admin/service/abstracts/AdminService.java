@@ -4,6 +4,8 @@ import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
 import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
 import com.muhammed.springsecurity.admin.model.responses.AdminLoginResponse;
 import com.muhammed.springsecurity.admin.model.responses.AdminRegistrationResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AdminService {
 
@@ -11,4 +13,5 @@ public interface AdminService {
 
     AdminLoginResponse login(AdminLoginRequest adminLoginRequest);
 
+    void refreshToken(HttpServletRequest request, HttpServletResponse response);
 }

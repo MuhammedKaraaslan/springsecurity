@@ -8,6 +8,8 @@ import com.muhammed.springsecurity.admin.service.abstracts.AdminService;
 import com.muhammed.springsecurity.user.business.abstracts.UserService;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,10 @@ public class AdminManager implements AdminService {
                 userLoginResponse.accessToken(),
                 userLoginResponse.refreshToken()
         );
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        this.userService.refreshToken(request, response);
     }
 }

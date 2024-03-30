@@ -18,6 +18,7 @@ import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AdminManagerTest extends AbstractServiceTest{
@@ -95,6 +96,15 @@ class AdminManagerTest extends AbstractServiceTest{
 
         // Then
         assertThrows(BusinessException.class, () -> underTest.login(invalidRequest));
+    }
+
+    @Test
+    void Given_ValidRequest_When_RefreshTokenIsCalled_Then_DelegateToUserService() {
+        // When
+        underTest.refreshToken(request, response);
+
+        // Then
+        verify(userService).refreshToken(request, response);
     }
 
 
