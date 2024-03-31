@@ -1,12 +1,14 @@
 package com.muhammed.springsecurity.customer.service.concretes;
 
 import com.muhammed.springsecurity.abstracts.AbstractServiceTest;
+import com.muhammed.springsecurity.customer.dataAccess.abstracts.CustomerDao;
 import com.muhammed.springsecurity.customer.model.entities.Customer;
 import com.muhammed.springsecurity.customer.model.requests.CustomerLoginRequest;
 import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationRequest;
 import com.muhammed.springsecurity.customer.model.responses.CustomerLoginResponse;
 import com.muhammed.springsecurity.customer.model.responses.CustomerRegistrationResponse;
 import com.muhammed.springsecurity.exceptions.BusinessException;
+import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.user.business.abstracts.UserService;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -25,6 +28,9 @@ class CustomerManagerTest extends AbstractServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private CustomerDao customerDao;
 
     @Mock
     private HttpServletRequest request;
@@ -74,6 +80,8 @@ class CustomerManagerTest extends AbstractServiceTest {
 
         CustomerLoginResponse expected = new CustomerLoginResponse(jwtToken, refreshToken);
 
+        when(customerDao.existsCustomerByEmail(customerLoginRequest.email()))
+                .thenReturn(true);
         when(userService.login(customerLoginRequest.email(), customerLoginRequest.password()))
                 .thenReturn(new UserLoginResponse(jwtToken, refreshToken));
 
@@ -85,13 +93,33 @@ class CustomerManagerTest extends AbstractServiceTest {
     }
 
     @Test
+    void Given_NonExistingCustomerEmail_When_LoginIsCalled_Then_ThrowResourceNotFoundException() {
+        // Given
+        CustomerLoginRequest invalidRequest =
+                new CustomerLoginRequest(
+                        "nonexisting@email.com",
+                        "Password1.");
+
+        when(customerDao.existsCustomerByEmail(invalidRequest.email()))
+                .thenReturn(false);
+
+        // Then
+        assertThatThrownBy(() -> underTest.login(invalidRequest))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage(String.format("Customer not found with email: %s",
+                        invalidRequest.email()));
+    }
+
+    @Test
     void Given_InvalidCustomerLoginRequest_When_LoginIsCalled_Then_ThrowBusinessException() {
         // Given
         CustomerLoginRequest invalidRequest =
                 new CustomerLoginRequest(
-                        "invalid@email.com",
+                        "test@email.com",
                         "WrongPassword");
 
+        when(customerDao.existsCustomerByEmail(invalidRequest.email()))
+                .thenReturn(true);
         when(userService.login(invalidRequest.email(), invalidRequest.password()))
                 .thenThrow(new BusinessException("Invalid credentials"));
 
