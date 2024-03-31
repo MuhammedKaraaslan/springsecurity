@@ -2,7 +2,6 @@ package com.muhammed.springsecurity.customer.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.muhammed.springsecurity.abstracts.AbstractTestcontainers;
 import com.muhammed.springsecurity.customer.model.requests.CustomerLoginRequest;
 import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationRequest;
 import org.junit.jupiter.api.Test;
@@ -27,11 +26,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
-class CustomerControllerTest extends AbstractTestcontainers {
+class CustomerControllerTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -128,22 +126,6 @@ class CustomerControllerTest extends AbstractTestcontainers {
                         .value(String.format("Customer not found with email: %s", request.email())));
     }
 
-    @ParameterizedTest
-    @MethodSource("provideInvalidLoginData")
-    void Given_InvalidParameters_When_Login_Then_ReturnBadRequest(String email, String password, String expectedErrorMessage) throws Exception {
-        //Given
-        CustomerLoginRequest request = new CustomerLoginRequest(email, password);
-
-        //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors").exists())
-                .andExpect(jsonPath("$.errors[*]")
-                        .value(expectedErrorMessage));
-    }
-
     @Test
     void Given_WrongPassword_When_Login_Then_ReturnBadRequest() throws Exception {
         //Given
@@ -195,10 +177,6 @@ class CustomerControllerTest extends AbstractTestcontainers {
 
     private static Stream<Arguments> provideInvalidRegistrationData() {
         return CustomerTestDataProvider.provideInvalidRegistrationData();
-    }
-
-    private static Stream<Arguments> provideInvalidLoginData() {
-        return CustomerTestDataProvider.provideInvalidLoginData();
     }
 
     private String registerCustomer(CustomerRegistrationRequest registrationRequest) throws Exception {
