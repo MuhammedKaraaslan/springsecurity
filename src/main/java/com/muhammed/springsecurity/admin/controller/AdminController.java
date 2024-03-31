@@ -39,6 +39,7 @@ public class AdminController {
     }
 
     @PostMapping("/login")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AdminLoginResponse> login(
             @Valid @RequestBody AdminLoginRequest adminLoginRequest) {
         AdminLoginResponse response = adminService.login(adminLoginRequest);
