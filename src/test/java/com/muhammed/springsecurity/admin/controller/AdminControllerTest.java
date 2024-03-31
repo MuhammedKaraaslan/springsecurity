@@ -1,9 +1,11 @@
 package com.muhammed.springsecurity.admin.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muhammed.springsecurity.abstracts.AbstractTestcontainers;
 import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
 import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
+import com.muhammed.springsecurity.user.model.responses.UserRefreshTokenResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +41,6 @@ class AdminControllerTest extends AbstractTestcontainers {
 
     public static final Random RANDOM = new Random();
     public static final String ADMIN_PATH = "/api/v1/admins";
-
-//    @WithMockUser("spring")
-//    @Test
-//    public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-//        mvc.perform(get("/private/hello").contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
 
     @Test
     void Given_ValidAdminRegistrationRequest_When_Register_Then_ReturnAdminRegistrationResponse() throws Exception {
@@ -170,12 +166,39 @@ class AdminControllerTest extends AbstractTestcontainers {
                         .value("Bad credentials"));
     }
 
-    private void registerAdmin(AdminRegistrationRequest adminRegistrationRequest) throws Exception {
-        mockMvc.perform(post(ADMIN_PATH + "/register")
+    @Test
+    void Given_ValidAdminRefreshTokenRequest_When_RefreshToken_Then_ReturnAdminRefreshTokenResponse() throws Exception {
+        //Given
+        AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
+                "admin" + RANDOM.nextInt(1000) + "@example.com",
+                "Password1.",
+                "dummyDepartment"
+        );
+
+        String accessKey = registerAdmin(adminRegistrationRequest);
+
+        //Then
+        mockMvc.perform(post(ADMIN_PATH + "/refresh-token")
+                        .contentType(APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessKey))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists());
+    }
+
+    private String registerAdmin(AdminRegistrationRequest adminRegistrationRequest) throws Exception {
+        MvcResult result = mockMvc.perform(post(ADMIN_PATH + "/register")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(adminRegistrationRequest)))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+        String accessToken = jsonNode.get("access_token").asText();
+
+        return accessToken;
     }
 
     private static Stream<Arguments> provideInvalidRegistrationData() {
