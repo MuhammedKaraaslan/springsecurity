@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CustomerRepositoryTest extends AbstractRepositoryTest {
 
@@ -42,6 +41,25 @@ class CustomerRepositoryTest extends AbstractRepositoryTest {
 
         // Then
         assertTrue(foundCustomer.isEmpty());
+    }
+
+    @Test
+    void Given_CustomerExistsByEmail_When_ExistsCustomerByEmail_Then_ReturnTrue() {
+        //Given
+        String email = "test@email.com";
+        saveCustomer(email, "Password1.", "dummyFirstname", "dummyLastname");
+
+        // Then
+        assertTrue(underTest.existsCustomerByEmail(email));
+    }
+
+    @Test
+    void Given_CustomerDoesNotExistByEmail_When_ExistsCustomerByEmail_Then_ReturnFalse() {
+        //Given
+        String email = "test@email.com";
+
+        // Then
+        assertFalse(underTest.existsCustomerByEmail(email));
     }
 
     private Customer saveCustomer(String email, String password, String firstname, String lastname) {

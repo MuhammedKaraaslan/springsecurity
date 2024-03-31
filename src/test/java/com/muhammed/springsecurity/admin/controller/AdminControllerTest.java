@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muhammed.springsecurity.abstracts.AbstractTestcontainers;
 import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
 import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
-import com.muhammed.springsecurity.user.model.responses.UserRefreshTokenResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -196,9 +195,8 @@ class AdminControllerTest extends AbstractTestcontainers {
 
         String responseBody = result.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-        String accessToken = jsonNode.get("access_token").asText();
 
-        return accessToken;
+        return jsonNode.get("access_token").asText();
     }
 
     private static Stream<Arguments> provideInvalidRegistrationData() {

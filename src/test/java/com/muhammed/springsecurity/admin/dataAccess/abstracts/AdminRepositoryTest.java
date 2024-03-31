@@ -47,7 +47,7 @@ class AdminRepositoryTest  extends AbstractRepositoryTest {
     void Given_AdminExistsByEmail_When_ExistsAdminByEmail_Then_ReturnTrue() {
         //Given
         String email = "test@email.com";
-        Admin expected = saveAdmin(email, "Password1.", "dummyDepartment");
+        saveAdmin(email, "Password1.", "dummyDepartment");
 
         // Then
         assertTrue(underTest.existsAdminByEmail(email));
