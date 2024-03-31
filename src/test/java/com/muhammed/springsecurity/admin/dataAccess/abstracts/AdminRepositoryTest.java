@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AdminRepositoryTest  extends AbstractRepositoryTest {
 
@@ -42,6 +41,25 @@ class AdminRepositoryTest  extends AbstractRepositoryTest {
 
         // Then
         assertTrue(foundCustomer.isEmpty());
+    }
+
+    @Test
+    void Given_AdminExistsByEmail_When_ExistsAdminByEmail_Then_ReturnTrue() {
+        //Given
+        String email = "test@email.com";
+        Admin expected = saveAdmin(email, "Password1.", "dummyDepartment");
+
+        // Then
+        assertTrue(underTest.existsAdminByEmail(email));
+    }
+
+    @Test
+    void Given_AdminDoesNotExistByEmail_When_ExistsAdminByEmail_Then_ReturnFalse() {
+        //Given
+        String email = "test@email.com";
+
+        // Then
+        assertFalse(underTest.existsAdminByEmail(email));
     }
 
     private Admin saveAdmin(String email, String password, String department) {

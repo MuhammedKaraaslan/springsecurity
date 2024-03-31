@@ -24,4 +24,9 @@ public class AdminJPADataAccessService implements AdminDao {
     public Optional<Admin> findByEmail(String email) {
         return this.adminRepository.findByEmail(email);
     }
+
+    @Override
+    public boolean existsAdminByEmail(String email) {
+        return this.adminRepository.existsAdminByEmail(email);
+    }
 }

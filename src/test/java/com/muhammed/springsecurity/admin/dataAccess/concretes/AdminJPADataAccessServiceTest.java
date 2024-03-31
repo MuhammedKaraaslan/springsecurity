@@ -11,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +58,7 @@ class AdminJPADataAccessServiceTest {
     }
 
     @Test
-    void Given_CustomerDoesNotExistByEmail_When_FindByEmailIsCalled_Then_ReturnEmptyOptional() {
+    void Given_AdminDoesNotExistByEmail_When_FindByEmailIsCalled_Then_ReturnEmptyOptional() {
         // Given
         String email = "nonexistent@email.com";
 
@@ -70,5 +69,27 @@ class AdminJPADataAccessServiceTest {
 
         // Then
         assertTrue(foundCustomer.isEmpty());
+    }
+
+    @Test
+    void Given_AdminExistsByEmail_When_ExistAdminByEmailCalled_Then_ReturnTrue() {
+        //Given
+        String email = "test@email.com";
+
+        when(adminRepository.existsAdminByEmail(email)).thenReturn(true);
+
+        // Then
+        assertTrue(underTest.existsAdminByEmail(email));
+    }
+
+    @Test
+    void Given_AdminDoesNotExistsByEmail_When_ExistAdminByEmailCalled_Then_ReturnFalse() {
+        // Given
+        String email = "nonexistent@email.com";
+
+        when(adminRepository.existsAdminByEmail(email)).thenReturn(false);
+
+        // Then
+        assertFalse(underTest.existsAdminByEmail(email));
     }
 }

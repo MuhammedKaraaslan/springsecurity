@@ -1,12 +1,14 @@
 package com.muhammed.springsecurity.admin.service.concretes;
 
 import com.muhammed.springsecurity.abstracts.AbstractServiceTest;
+import com.muhammed.springsecurity.admin.dataAccess.abstracts.AdminDao;
 import com.muhammed.springsecurity.admin.model.entities.Admin;
 import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
 import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
 import com.muhammed.springsecurity.admin.model.responses.AdminLoginResponse;
 import com.muhammed.springsecurity.admin.model.responses.AdminRegistrationResponse;
 import com.muhammed.springsecurity.exceptions.BusinessException;
+import com.muhammed.springsecurity.exceptions.ResourceNotFoundException;
 import com.muhammed.springsecurity.user.business.abstracts.UserService;
 import com.muhammed.springsecurity.user.model.responses.UserLoginResponse;
 import com.muhammed.springsecurity.user.model.responses.UserRegistrationResponse;
@@ -16,15 +18,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdminManagerTest extends AbstractServiceTest{
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private AdminDao adminDao;
 
     @Mock
     private HttpServletRequest request;
@@ -36,7 +41,7 @@ class AdminManagerTest extends AbstractServiceTest{
     private AdminManager underTest;
 
     @Test
-    void Given_ValidCustomerRegistrationRequest_When_RegisterIsCalled_Then_ReturnCustomerRegistrationResponse() {
+    void Given_ValidAdminRegistrationRequest_When_RegisterIsCalled_Then_ReturnAdminRegistrationResponse() {
         // Given
         String jwtToken = "jwtToken";
         String refreshToken = "refreshToken";
@@ -61,7 +66,7 @@ class AdminManagerTest extends AbstractServiceTest{
     }
 
     @Test
-    void Given_ValidCustomerLoginRequest_When_LoginIsCalled_Then_ReturnCustomerLoginResponse() {
+    void Given_ValidAdminLoginRequest_When_LoginIsCalled_Then_ReturnAdminLoginResponse() {
         // Given
         String jwtToken = "jwtToken";
         String refreshToken = "refreshToken";
@@ -73,6 +78,8 @@ class AdminManagerTest extends AbstractServiceTest{
 
         AdminLoginResponse expected = new AdminLoginResponse(jwtToken, refreshToken);
 
+        when(adminDao.existsAdminByEmail(adminLoginRequest.email()))
+                .thenReturn(true);
         when(userService.login(adminLoginRequest.email(), adminLoginRequest.password()))
                 .thenReturn(new UserLoginResponse(jwtToken, refreshToken));
 
@@ -84,13 +91,33 @@ class AdminManagerTest extends AbstractServiceTest{
     }
 
     @Test
-    void Given_InvalidCustomerLoginRequest_When_LoginIsCalled_Then_ThrowBusinessException() {
+    void Given_NonExistingAdminEmail_When_LoginIsCalled_Then_ThrowResourceNotFoundException() {
+        // Given
+        AdminLoginRequest invalidRequest =
+                new AdminLoginRequest(
+                        "nonexisting@email.com",
+                        "Password1.");
+
+        when(adminDao.existsAdminByEmail(invalidRequest.email()))
+                .thenReturn(false);
+
+        // Then
+        assertThatThrownBy(() -> underTest.login(invalidRequest))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage(String.format("Admin not found with email: %s",
+                        invalidRequest.email()));
+    }
+
+    @Test
+    void Given_InvalidAdminLoginRequest_When_LoginIsCalled_Then_ThrowBusinessException() {
         // Given
         AdminLoginRequest invalidRequest =
                 new AdminLoginRequest(
                         "invalid@email.com",
                         "WrongPassword");
 
+        when(adminDao.existsAdminByEmail(invalidRequest.email()))
+                .thenReturn(true);
         when(userService.login(invalidRequest.email(), invalidRequest.password()))
                 .thenThrow(new BusinessException("Invalid credentials"));
 

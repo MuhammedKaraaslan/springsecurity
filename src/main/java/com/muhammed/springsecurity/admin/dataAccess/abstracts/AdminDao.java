@@ -10,4 +10,6 @@ public interface AdminDao {
 
     Optional<Admin> findByEmail(String email);
 
+    boolean existsAdminByEmail(String email);
+
 }

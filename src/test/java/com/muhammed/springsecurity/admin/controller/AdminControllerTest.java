@@ -7,7 +7,6 @@ import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -123,10 +122,9 @@ class AdminControllerTest extends AbstractTestcontainers {
         mockMvc.perform(post(ADMIN_PATH + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors[*]")
-                        .value("Bad credentials"));
+                        .value(String.format("Admin not found with email: %s", request.email())));
     }
 
     @ParameterizedTest
@@ -145,25 +143,20 @@ class AdminControllerTest extends AbstractTestcontainers {
                         .value(expectedErrorMessage));
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "correct@email.com, wrong@email.com, Password1., Password1.",
-            "register@email.com, register@email.com, Password1., wrongPassword1."
-    })
-    void Given_WrongEmailOrPassword_When_Login_Then_ReturnBadRequest(
-            String registerEmail,
-            String loginEmail,
-            String registerPassword,
-            String loginPassword) throws Exception {
+    @Test
+    void Given_WrongPassword_When_Login_Then_ReturnBadRequest() throws Exception {
         //Given
 
+        String email = "test@email.com";
+        String registerPassword = "Password1.";
+        String loginPassword = "LoginPassword1.";
         AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
-                registerEmail,
+                email,
                 registerPassword,
                 "dummyDepartment"
         );
 
-        AdminLoginRequest adminLoginRequest = new AdminLoginRequest(loginEmail, loginPassword);
+        AdminLoginRequest adminLoginRequest = new AdminLoginRequest(email, loginPassword);
 
         registerAdmin(adminRegistrationRequest);
 
