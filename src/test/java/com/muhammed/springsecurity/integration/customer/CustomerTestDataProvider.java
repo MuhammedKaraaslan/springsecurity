@@ -1,4 +1,4 @@
-package com.muhammed.springsecurity.customer.controller;
+package com.muhammed.springsecurity.integration.customer;
 
 import org.junit.jupiter.params.provider.Arguments;
 

@@ -1,9 +1,9 @@
-package com.muhammed.springsecurity.customer.controller;
+package com.muhammed.springsecurity.integration.admin;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.muhammed.springsecurity.customer.model.requests.CustomerLoginRequest;
-import com.muhammed.springsecurity.customer.model.requests.CustomerRegistrationRequest;
+import com.muhammed.springsecurity.admin.model.requests.AdminLoginRequest;
+import com.muhammed.springsecurity.admin.model.requests.AdminRegistrationRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -29,7 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
-class CustomerControllerTest {
+class AdminIntegrationTest {
+
+    private static final Random RANDOM = new Random();
+    private static final String ADMIN_PATH = "/api/v1/admins";
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -37,23 +40,19 @@ class CustomerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    public static final Random RANDOM = new Random();
-    public static final String CUSTOMERS_PATH = "/api/v1/customers";
-
     @Test
-    void Given_ValidCustomerRegistrationRequest_When_Register_Then_ReturnCustomerRegistrationResponse() throws Exception {
+    void Given_ValidAdminRegistrationRequest_When_Register_Then_ReturnAdminRegistrationResponse() throws Exception {
         //Given
-        CustomerRegistrationRequest customerRegistrationRequest = new CustomerRegistrationRequest(
-                "customer" + RANDOM.nextInt(1000) + "@example.com",
+        AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
+                "admin" + RANDOM.nextInt(1000) + "@example.com",
                 "Password1.",
-                "dummyFirstName",
-                "dummyLastName"
+                "dummyDepartment"
         );
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/register")
+        mockMvc.perform(post(ADMIN_PATH + "/register")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customerRegistrationRequest)))
+                        .content(objectMapper.writeValueAsString(adminRegistrationRequest)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.access_token").exists())
@@ -62,19 +61,18 @@ class CustomerControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidRegistrationData")
-    void Given_InValidCustomerRegistrationRequest_When_Register_Then_ReturnBadRequest(
+    void Given_InValidAdminRegistrationRequest_When_Register_Then_ReturnBadRequest(
             String email,
             String password,
-            String firstName,
-            String lastName,
+            String department,
             String expectedErrorMessage)
             throws Exception {
 
         //Given
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(email, password, firstName, lastName);
+        AdminRegistrationRequest request = new AdminRegistrationRequest(email, password, department);
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/register")
+        mockMvc.perform(post(ADMIN_PATH + "/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -84,26 +82,25 @@ class CustomerControllerTest {
     }
 
     @Test
-    void Given_ValidCustomerLoginRequest_When_Login_Then_ReturnCustomerLoginResponse() throws Exception {
+    void Given_ValidAdminLoginRequest_When_Login_Then_ReturnAdminLoginResponse() throws Exception {
         //Given
-        String email = "customer" + RANDOM.nextInt(1000) + "@example.com";
+        String email = "admin" + RANDOM.nextInt(1000) + "@example.com";
         String password = "Password1.";
 
-        CustomerRegistrationRequest customerRegistrationRequest = new CustomerRegistrationRequest(
+        AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
                 email,
                 password,
-                "dummyFirstName",
-                "dummyLastName"
+                "dummyDepartment"
         );
 
-        CustomerLoginRequest customerLoginRequest = new CustomerLoginRequest(email, password);
+        AdminLoginRequest adminLoginRequest = new AdminLoginRequest(email, password);
 
-        registerCustomer(customerRegistrationRequest);
+        registerAdmin(adminRegistrationRequest);
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/login")
+        mockMvc.perform(post(ADMIN_PATH + "/login")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customerLoginRequest)))
+                        .content(objectMapper.writeValueAsString(adminLoginRequest)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
@@ -113,41 +110,56 @@ class CustomerControllerTest {
     @Test
     void Given_NotRegistered_When_Login_Then_ReturnUnauthorized() throws Exception {
         //Given
-        CustomerLoginRequest request = new CustomerLoginRequest(
-                "customer" + RANDOM.nextInt(1000) + "@example.com",
+        AdminLoginRequest request = new AdminLoginRequest(
+                "admin" + RANDOM.nextInt(1000) + "@example.com",
                 "Password1.");
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/login")
+        mockMvc.perform(post(ADMIN_PATH + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors[*]")
-                        .value(String.format("Customer not found with email: %s", request.email())));
+                        .value(String.format("Admin not found with email: %s", request.email())));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidLoginData")
+    void Given_InvalidParameters_When_Login_Then_ReturnBadRequest(String email, String password, String expectedErrorMessage) throws Exception {
+        //Given
+        AdminLoginRequest request = new AdminLoginRequest(email, password);
+
+        //Then
+        mockMvc.perform(post(ADMIN_PATH + "/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors[*]")
+                        .value(expectedErrorMessage));
     }
 
     @Test
     void Given_WrongPassword_When_Login_Then_ReturnBadRequest() throws Exception {
         //Given
 
-        String email = "customer" + RANDOM.nextInt(1000) + "@example.com";
+        String email = "admin" + RANDOM.nextInt(1000) + "@example.com";
         String registerPassword = "Password1.";
         String loginPassword = "LoginPassword1.";
-        CustomerRegistrationRequest registrationRequest = new CustomerRegistrationRequest(
+        AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
                 email,
                 registerPassword,
-                "dummyFirstName",
-                "dummyLastName"
+                "dummyDepartment"
         );
 
-        CustomerLoginRequest loginRequest = new CustomerLoginRequest(email, loginPassword);
+        AdminLoginRequest adminLoginRequest = new AdminLoginRequest(email, loginPassword);
 
-        registerCustomer(registrationRequest);
+        registerAdmin(adminRegistrationRequest);
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/login")
+        mockMvc.perform(post(ADMIN_PATH + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        .content(objectMapper.writeValueAsString(adminLoginRequest)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.errors").exists())
                 .andExpect(jsonPath("$.errors[*]")
@@ -157,17 +169,16 @@ class CustomerControllerTest {
     @Test
     void Given_ValidAdminRefreshTokenRequest_When_RefreshToken_Then_ReturnAdminRefreshTokenResponse() throws Exception {
         //Given
-        CustomerRegistrationRequest registrationRequest = new CustomerRegistrationRequest(
-                "customer" + RANDOM.nextInt(1000) + "@example.com",
+        AdminRegistrationRequest adminRegistrationRequest = new AdminRegistrationRequest(
+                "admin" + RANDOM.nextInt(1000) + "@example.com",
                 "Password1.",
-                "dummyFirstName",
-                "dummyLastName"
+                "dummyDepartment"
         );
 
-        String accessKey = registerCustomer(registrationRequest);
+        String accessKey = registerAdmin(adminRegistrationRequest);
 
         //Then
-        mockMvc.perform(post(CUSTOMERS_PATH + "/refresh-token")
+        mockMvc.perform(post(ADMIN_PATH + "/refresh-token")
                         .contentType(APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessKey))
                 .andDo(MockMvcResultHandlers.print())
@@ -175,14 +186,10 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.access_token").exists());
     }
 
-    private static Stream<Arguments> provideInvalidRegistrationData() {
-        return CustomerTestDataProvider.provideInvalidRegistrationData();
-    }
-
-    private String registerCustomer(CustomerRegistrationRequest registrationRequest) throws Exception {
-        MvcResult result = mockMvc.perform(post(CUSTOMERS_PATH + "/register")
+    private String registerAdmin(AdminRegistrationRequest adminRegistrationRequest) throws Exception {
+        MvcResult result = mockMvc.perform(post(ADMIN_PATH + "/register")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registrationRequest)))
+                        .content(objectMapper.writeValueAsString(adminRegistrationRequest)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -193,5 +200,11 @@ class CustomerControllerTest {
         return jsonNode.get("access_token").asText();
     }
 
+    private static Stream<Arguments> provideInvalidRegistrationData() {
+        return AdminTestDataProvider.provideInvalidRegistrationData();
+    }
 
+    private static Stream<Arguments> provideInvalidLoginData() {
+        return AdminTestDataProvider.provideInvalidLoginData();
+    }
 }

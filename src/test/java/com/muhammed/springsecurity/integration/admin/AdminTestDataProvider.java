@@ -1,4 +1,4 @@
-package com.muhammed.springsecurity.admin.controller;
+package com.muhammed.springsecurity.integration.admin;
 
 import org.junit.jupiter.params.provider.Arguments;
 
