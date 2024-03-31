@@ -1,5 +1,6 @@
 package com.muhammed.springsecurity.abstracts;
 
+import org.junit.jupiter.api.AfterAll;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -35,9 +36,9 @@ public abstract class AbstractTestcontainers {
         registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
     }
 
-//     //Optional: Cleanup method to stop the PostgreSQL container after all tests
-//     @AfterAll
-//     static void cleanup() {
-//         postgreSQLContainer.stop();
-//     }
+    //Optional: Cleanup method to stop the PostgreSQL container after all tests
+    @AfterAll
+    static void cleanup() {
+        postgreSQLContainer.stop();
+    }
 }

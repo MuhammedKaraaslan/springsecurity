@@ -14,4 +14,11 @@ public class AdminTestDataProvider {
                 Arguments.of("test@example.com", "Password1.", "", "Name must be at least 2 characters long")
         );
     }
+
+    public static Stream<Arguments> provideInvalidLoginData() {
+        return Stream.of(
+                Arguments.of("invalidemail", "Password1.",  "must be a well-formed email address"),
+                Arguments.of("test@example.com", "weak", "Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters long")
+        );
+    }
 }
