@@ -20,4 +20,10 @@ public class DemoController {
         return "Hello from customer secure endpoint";
     }
 
+    @GetMapping("/admin-secure-endpoint")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String adminSecureEndPoint() {
+        return "Hello from admin secure endpoint";
+    }
+
 }
