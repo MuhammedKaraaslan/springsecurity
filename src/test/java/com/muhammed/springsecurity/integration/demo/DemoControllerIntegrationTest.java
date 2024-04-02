@@ -19,7 +19,7 @@ class DemoControllerIntegrationTest {
     private static final String DEMO_PATH = "/api/v1/demo";
     private static final String CUSTOMER_SECURE_ENDPOINT = "/customer-secure-endpoint";
     private static final String ADMIN_SECURE_ENDPOINT = "/admin-secure-endpoint";
-
+    private static final String ADMIN_OR_CUSTOMER_SECURE_ENDPOINT = "/admin-or-customer-secure-endpoint";
 
     @Autowired
     private MockMvc mockMvc;
@@ -76,6 +76,31 @@ class DemoControllerIntegrationTest {
     @Test
     public void Given_UnAuthorizedUser_When_AdminSecureEndPoint_Then_ReturnAccessDenied() throws Exception {
         mockMvc.perform(get(DEMO_PATH + ADMIN_SECURE_ENDPOINT))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.errors").exists());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    public void Given_Admin_When_AdminOrCustomerSecureEndPoint_Then_ReturnResponse() throws Exception {
+        mockMvc.perform(get(DEMO_PATH + ADMIN_OR_CUSTOMER_SECURE_ENDPOINT))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Hello from admin or customer secure endpoint"));
+    }
+
+    @Test
+    @WithMockUser(username = "customer", roles = {"CUSTOMER"})
+    public void Given_Customer_When_AdminOrCustomerSecureEndPoint_Then_ReturnResponse() throws Exception {
+        mockMvc.perform(get(DEMO_PATH + ADMIN_OR_CUSTOMER_SECURE_ENDPOINT))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Hello from admin or customer secure endpoint"));
+    }
+
+    @Test
+    public void Given_UnAuthorizedUser_When_AdminOrCustomerSecureEndPoint_Then_ReturnAccessDenied() throws Exception {
+        mockMvc.perform(get(DEMO_PATH + ADMIN_OR_CUSTOMER_SECURE_ENDPOINT))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.errors").exists());
     }

@@ -26,4 +26,10 @@ public class DemoController {
         return "Hello from admin secure endpoint";
     }
 
+    @GetMapping("/admin-or-customer-secure-endpoint")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')")
+    public String adminOrCustomerSecureEndPoint() {
+        return "Hello from admin or customer secure endpoint";
+    }
+
 }
