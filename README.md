@@ -1,8 +1,8 @@
 # Spring Security with JWT Implementation
 
-### Admin Endpoints
+  ## Endpoints
 
-  <table style="width:100%">
+  <table style="width:500000">
         <thead>
             <tr>
                 <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Method</th>
@@ -34,23 +34,7 @@
                 <td></td>
                 <td>Bearer Token</td>
             </tr>
-        </tbody>
-  </table>
-
-  ### Customer Endpoints
-
-  <table style="border: 1px solid #dededf; height: 100%; width: 100%; table-layout: auto; border-collapse: collapse; border-spacing: 1px; text-align: left;">
-        <thead>
-            <tr>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Method</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Url</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Description</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Request Body</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Header</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+             <tr>
                 <td>POST</td>
                 <td>/api/v1/customers/register</td>
                 <td>Customer Register</td>
@@ -71,23 +55,7 @@
                 <td></td>
                 <td>Bearer Token</td>
             </tr>
-        </tbody>
-  </table>
-
-  ### Demo Endpoints
-
-  <table style="border: 1px solid #dededf; height: 100%; width: 100%; table-layout: auto; border-collapse: collapse; border-spacing: 1px; text-align: left;">
-        <thead>
-            <tr>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Method</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Url</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Description</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Request Body</th>
-                <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Header</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+                      <tr>
                 <td>GET</td>
                 <td>/api/v1/demo/public-endpoint</td>
                 <td>Public Endpoint</td>
