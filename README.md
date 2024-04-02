@@ -2,7 +2,7 @@
 
 ### Admin Endpoints
 
-  <table height: 100%; width: 100%;">
+  <table style="width:100%">
         <thead>
             <tr>
                 <th style="border: 1px solid #dededf; background-color: #eceff1; color: #000000; padding: 5px;">Method</th>
