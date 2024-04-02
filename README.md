@@ -2,7 +2,7 @@
 
 ### Admin Endpoints
 
-<table style="width:100%">
+<table>
   <tr>
       <th>Method</th>
       <th>Url</th>
