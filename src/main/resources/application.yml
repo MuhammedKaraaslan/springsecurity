@@ -2,31 +2,31 @@ server:
   error:
     include-message: always
 
-#spring:
-#  datasource:
-#    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5332/security}
-#    username: ${SPRING_DATASOURCE_USERNAME:security}
-#    password: ${SPRING_DATASOURCE_PASSWORD:password}
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: create-drop
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
-#        format_sql: true
-#    show-sql: false
-
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5332/security}
+    username: ${SPRING_DATASOURCE_USERNAME:security}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-  h2:
-    console.enabled: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+#spring:
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#    driverClassName: org.h2.Driver
+#  jpa:
+#    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+#  h2:
+#    console.enabled: true
 
 
 application:
