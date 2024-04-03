@@ -1,6 +1,44 @@
 # Spring Security with JWT Implementation
 
-  ## Endpoints
+## Basic Project Diagram
+
+![image](https://github.com/MuhammedKaraaslan/springsecurity/assets/39337485/0a7b81d0-5419-4018-9fad-cdf21bc43403)
+
+## Project Information
+### Overview
+This project is developed using Spring framework, focusing on Spring Security implementation. It includes two user types: Admin and Customer, each with their own authentication and authorization capabilities based on their roles.
+
+### Features
+- Authentication: Both Admin and Customer users can authenticate themselves using their respective credentials.
+- Authorization: Role-based access control is implemented, allowing Admin and Customer users to access specific resources based on their roles.
+- DemoController: A controller class named DemoController is created to demonstrate role-based access control through different endpoints:
+  - Public endpoint accessible to all users.
+  - Endpoint restricted to Admin user only.
+  - Endpoint restricted to Customer user only.
+  - Endpoint accessible to both Admin and Customer users.
+
+## Run Project Locally
+```
+git clone https://github.com/MuhammedKaraaslan/springsecurity.git
+cd springsecurity
+docker-compose up -d
+```
+
+#### Define environment variables or use default values in application.yml
+
+```
+spring.datasource
+  url={SPRING_DATASOURCE_URL}
+  username={SPRING_DATASOURCE_USERNAME}
+  password={SPRING_DATASOURCE_PASSWORD}
+
+application.security.jwt
+  secret-key={JWT_SECRET_KEY}
+  expiration={JWT_EXPIRATION}
+  expiration={REFRESH_TOKEN_EXPIRATION}
+```
+
+## Endpoints
 
   <table style="width:500000">
         <thead>
