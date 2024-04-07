@@ -32,7 +32,17 @@ public class SecurityFilterChainConfiguration {
             "/h2-console/**",
             "/api/v1/customers/**",
             "/api/v1/admins/**",
-            "/api/v1/demo/**"
+            "/api/v1/demo/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-ui/**"
     };
 
     /**
